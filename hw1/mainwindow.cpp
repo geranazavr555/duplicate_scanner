@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     worker(new Worker())
 {
     qRegisterMetaType<DuplicateScanner::bucket_type>("DuplicateScanner::bucket_type");
-    qRegisterMetaType<DuplicateScanner::bucket_file_size_type>("DuplicateScanner::bucket_file_size_type");
+    qRegisterMetaType<DuplicateScanner::file_size_type>("DuplicateScanner::file_size_type");
 
     ui->setupUi(this);
 
@@ -53,7 +53,7 @@ void MainWindow::scan_finished()
     ui->statusBar->showMessage("Scanning finished");
 }
 
-void MainWindow::recieve_same_files_group(DuplicateScanner::bucket_file_size_type single_file_size,
+void MainWindow::recieve_same_files_group(DuplicateScanner::file_size_type single_file_size,
         DuplicateScanner::bucket_type const & files)
 {
     auto group_root_item = new QTreeWidgetItem(ui->treeWidget);

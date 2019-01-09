@@ -28,7 +28,7 @@ void Worker::scaning_finished()
     emit finished();
 }
 
-void Worker::bucket_ready_slot(DuplicateScanner::bucket_file_size_type a, DuplicateScanner::bucket_type const& b)
+void Worker::bucket_ready_slot(DuplicateScanner::file_size_type a, DuplicateScanner::bucket_type const& b)
 {
     emit bucket_ready(a, b);
 }

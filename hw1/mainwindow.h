@@ -23,7 +23,7 @@ private slots:
 
 public slots:
     void scan_finished();
-    void recieve_same_files_group(DuplicateScanner::bucket_file_size_type, DuplicateScanner::bucket_type const&);
+    void recieve_same_files_group(DuplicateScanner::file_size_type, DuplicateScanner::bucket_type const&);
 
 signals:
     void start_scan();

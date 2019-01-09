@@ -24,9 +24,9 @@ void DuplicateScanner::scan()
     if (!comparator)
         comparator = std::make_unique<FileComparator>();
 
-    for (auto const& size_bucket_pair : buckets)
+    for (auto const& info_bucket_pair : buckets)
     {
-        process_bucket(size_bucket_pair.first, size_bucket_pair.second);
+        process_bucket(info_bucket_pair.first, info_bucket_pair.second);
 
         if (stop_required)
         {
@@ -34,13 +34,16 @@ void DuplicateScanner::scan()
             return;
         }
     }
+
+    qInfo() << "Finished";
+    emit finished();
 }
 
 void DuplicateScanner::preprocess_file(QString path)
 {
     qDebug() << path;
     QFile file(path);
-    buckets[file.size()].push_back(path);
+    buckets[bucket_info_type(file.size(), hash(path))].push_back(path);
 }
 
 void DuplicateScanner::fill_buckets()
@@ -58,11 +61,13 @@ void DuplicateScanner::fill_buckets()
     }
 }
 
-void DuplicateScanner::process_bucket(DuplicateScanner::bucket_file_size_type files_size,
-        const DuplicateScanner::bucket_type &bucket)
+void DuplicateScanner::process_bucket(bucket_info_type const &bucket_info,
+                                      DuplicateScanner::bucket_type const &bucket)
 {
     std::vector<bucket_type> result;
     size_t errors = 0;
+
+    qDebug() << "processing bucket: " << bucket_info.files_size;
 
     for (auto const& path : bucket)
     {
@@ -111,7 +116,7 @@ void DuplicateScanner::process_bucket(DuplicateScanner::bucket_file_size_type fi
     for (auto const& result_bucket : result)
     {
         if (result_bucket.size() > 1)
-            emit bucket_ready(files_size, result_bucket);
+            emit bucket_ready(bucket_info.files_size, result_bucket);
 
         if (stop_required)
             return;
@@ -126,4 +131,16 @@ void DuplicateScanner::start()
 void DuplicateScanner::stop()
 {
     stop_required = true;
+}
+
+DuplicateScanner::hash_type DuplicateScanner::hash(QString const &path)
+{
+    const size_t MAXLEN = 256;
+    hash_type data(MAXLEN, 0);
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+        throw UnableToOpenFileException(path.toStdString());
+    if (file.read(data.data(), MAXLEN) == -1)
+        throw FilesystemException(path.toStdString());
+    return data;
 }

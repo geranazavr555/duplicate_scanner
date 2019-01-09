@@ -3,10 +3,13 @@
 
 #include <vector>
 #include <QFile>
-#include <QtCore/QFileInfo>
+#include <QFileInfo>
+#include <QDebug>
 
 bool FileComparator::compare(QString const &a, QString const &b, bool const * abort = nullptr) const // TODO: проверить, нет ли утечки памяти
 {
+    qDebug() << "cmp: " << a << " " << b;
+
     QFile file_a(a), file_b(b);
     QFileInfo info_a(a), info_b(b);
 
@@ -42,9 +45,10 @@ bool FileComparator::compare(QString const &a, QString const &b, bool const * ab
         if (result_a == 0)
             break;
 
-        for (size_t i = 0; i < result_a; ++i)
-            if (buffer_a[i] != buffer_b[i])
-                return false;
+//        for (size_t i = 0; i < result_a; ++i)
+//            if (buffer_a[i] != buffer_b[i])
+        if (memcmp(buffer_a.data(), buffer_b.data(), static_cast<size_t>(result_a)) != 0)
+            return false;
     }
     return true;
 }
