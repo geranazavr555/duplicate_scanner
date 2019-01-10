@@ -14,6 +14,7 @@ void DuplicateScanner::scan()
 {
     qInfo() << "Scanning: " << directory;
 
+    emit set_steps_count(0);
     fill_buckets();
     if (stop_required)
     {
@@ -29,10 +30,7 @@ void DuplicateScanner::scan()
         process_bucket(info_bucket_pair.first, info_bucket_pair.second);
 
         if (stop_required)
-        {
-            emit finished();
-            return;
-        }
+            break;
     }
 
     qInfo() << "Finished";
@@ -52,9 +50,23 @@ void DuplicateScanner::fill_buckets()
     while (it.hasNext())
     {
         QString s = it.next();
-        QFileInfo info(s);
-        if (info.isFile())
-            preprocess_file(s);
+        try
+        {
+            QFileInfo info(s);
+            if (info.isFile())
+                try
+                {
+                    preprocess_file(s);
+                }
+                catch (FilesystemException const& err)
+                {
+                    qInfo() << err.what();
+                }
+        }
+        catch (std::exception const& err)
+        {
+            qWarning() << err.what();
+        }
 
         if (stop_required)
             return;

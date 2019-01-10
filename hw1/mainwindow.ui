@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>765</width>
-    <height>546</height>
+    <width>714</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,13 +34,29 @@
      </property>
     </column>
    </widget>
+   <widget class="QProgressBar" name="progressBar">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>480</y>
+      <width>711</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>765</width>
+     <width>714</width>
      <height>22</height>
     </rect>
    </property>
@@ -70,6 +86,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpenDirectory"/>
+   <addaction name="actionStop"/>
+   <addaction name="actionDeleteFile"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenDirectory">

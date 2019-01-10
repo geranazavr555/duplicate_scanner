@@ -58,6 +58,8 @@ private:
 signals:
     void bucket_ready(file_size_type, bucket_type const&);
     void finished();
+    void set_steps_count(int);
+    void set_current_step(int);
 
 public slots:
     void start();
