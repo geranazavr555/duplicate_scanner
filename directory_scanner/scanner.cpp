@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QDebug>
 #include <QDir>
+#include <QThread>
 
 DuplicateScanner::DuplicateScanner(QString directory):
     comparator(nullptr),
@@ -14,13 +15,16 @@ void DuplicateScanner::scan()
 {
     qInfo() << "Scanning: " << directory;
 
-    emit set_steps_count(0);
+    count_files();
     fill_buckets();
     if (stop_required)
     {
         emit finished();
         return;
     }
+
+    emit set_steps_count(0);
+    emit set_current_step(0);
 
     if (!comparator)
         comparator = std::make_unique<FileComparator>();
@@ -46,6 +50,7 @@ void DuplicateScanner::preprocess_file(QString path)
 
 void DuplicateScanner::fill_buckets()
 {
+    int step = 0;
     QDirIterator it(QString(directory), QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
     while (it.hasNext())
     {
@@ -54,14 +59,19 @@ void DuplicateScanner::fill_buckets()
         {
             QFileInfo info(s);
             if (info.isFile())
+            {
                 try
                 {
-                    preprocess_file(s);
+                    if (!info.isSymLink())
+                        preprocess_file(s);
                 }
-                catch (FilesystemException const& err)
+                catch (FilesystemException const &err)
                 {
                     qInfo() << err.what();
                 }
+                ++step;
+                emit set_current_step(step);
+            }
         }
         catch (std::exception const& err)
         {
@@ -155,4 +165,31 @@ DuplicateScanner::hash_type DuplicateScanner::hash(QString const &path)
     if (file.read(data.data(), MAXLEN) == -1)
         throw FilesystemException(path.toStdString());
     return data;
+}
+
+int DuplicateScanner::count_files()
+{
+    int result = 0, errors = 0;
+    QDirIterator it(QString(directory), QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
+    while (it.hasNext())
+    {
+        QString s = it.next();
+        try
+        {
+            QFileInfo info(s);
+            if (info.isFile())
+                ++result;
+        }
+        catch (std::exception const& err)
+        {
+            qWarning() << err.what();
+            ++errors;
+        }
+
+        if (stop_required)
+            return result;
+    }
+    emit set_steps_count(result);
+    qDebug() << "Files: " << result;
+    return result;
 }

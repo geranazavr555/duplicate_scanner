@@ -21,6 +21,8 @@ void Worker::set_target_directory(QString const &target_directory)
     connect(this, &Worker::stop_signal, scanner.get(), &DuplicateScanner::stop, Qt::DirectConnection);
     connect(scanner.get(), &DuplicateScanner::finished, this, &Worker::finished);
     connect(scanner.get(), &DuplicateScanner::bucket_ready, this, &Worker::bucket_ready_slot);
+    connect(scanner.get(), &DuplicateScanner::set_steps_count, this, &Worker::set_steps_count_slot);
+    connect(scanner.get(), &DuplicateScanner::set_current_step, this, &Worker::set_current_step_slot);
 }
 
 void Worker::scaning_finished()

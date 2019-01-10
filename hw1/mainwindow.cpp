@@ -46,7 +46,7 @@ void MainWindow::make_ui()
     ui->treeWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->treeWidget->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
-    ui->progressBar->setMinimum(0);
+    ui->progressBar->hide();
 }
 
 void MainWindow::make_connections()
@@ -59,6 +59,8 @@ void MainWindow::make_connections()
     connect(this, &MainWindow::set_directory_to_scan, worker, &Worker::set_target_directory);
     connect(worker, &Worker::finished, this, &MainWindow::scan_finished);
     connect(worker, &Worker::bucket_ready, this, &MainWindow::recieve_same_files_group);
+    connect(worker, &Worker::set_current_step, this, &MainWindow::set_current_step);
+    connect(worker, &Worker::set_steps_count, this, &MainWindow::set_steps_count);
 }
 
 
@@ -71,7 +73,9 @@ void MainWindow::open_directory()
     setWindowTitle("Duplicate scanner: " + dir);
     ui->statusBar->showMessage("Scanning...");
     ui->treeWidget->clear();
+    ui->progressBar->setMaximum(0);
     ui->progressBar->reset();
+    ui->progressBar->show();
     timer.restart();
 
     emit set_directory_to_scan(dir);
@@ -81,6 +85,8 @@ void MainWindow::open_directory()
 void MainWindow::scan_finished()
 {
     ui->statusBar->showMessage("Scanning finished in " + QString::number(timer.elapsed()) + " ms");
+    ui->progressBar->setMaximum(1);
+    ui->progressBar->reset();
 }
 
 void MainWindow::recieve_same_files_group(DuplicateScanner::file_size_type single_file_size,
@@ -102,6 +108,7 @@ void MainWindow::recieve_same_files_group(DuplicateScanner::file_size_type singl
 void MainWindow::set_steps_count(int count)
 {
     ui->progressBar->setMaximum(count);
+    ui->statusBar->showMessage("Scanning... Files detected: " + QString::number(count));
 }
 
 void MainWindow::set_current_step(int step)

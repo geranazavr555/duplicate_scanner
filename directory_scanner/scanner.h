@@ -47,6 +47,7 @@ private:
 public:
     DuplicateScanner(QString directory);
     void scan();
+    int count_files();
 
 private:
     void fill_buckets();
