@@ -8,7 +8,7 @@
 
 bool FileComparator::compare(QString const &a, QString const &b, bool const * abort = nullptr) const // TODO: проверить, нет ли утечки памяти
 {
-    qDebug() << "cmp: " << a << " " << b;
+   // qDebug() << "cmp: " << a << " " << b;
 
     QFile file_a(a), file_b(b);
     QFileInfo info_a(a), info_b(b);

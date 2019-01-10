@@ -66,7 +66,7 @@ void MainWindow::open_directory()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Select directory to scan", QDir::currentPath());
 
-    qDebug() << dir;
+   // qDebug() << dir;
 
     setWindowTitle("Duplicate scanner: " + dir);
     ui->statusBar->showMessage("Scanning...");

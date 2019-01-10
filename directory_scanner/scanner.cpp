@@ -39,7 +39,7 @@ void DuplicateScanner::scan()
 
 void DuplicateScanner::preprocess_file(QString path)
 {
-    qDebug() << path;
+    //qDebug() << path;
     QFile file(path);
     buckets[bucket_info_type(file.size(), hash(path))].push_back(path);
 }
@@ -79,7 +79,7 @@ void DuplicateScanner::process_bucket(bucket_info_type const &bucket_info,
     std::vector<bucket_type> result;
     size_t errors = 0;
 
-    qDebug() << "processing bucket: " << bucket_info.files_size;
+    //qDebug() << "processing bucket: " << bucket_info.files_size;
 
     for (auto const& path : bucket)
     {
