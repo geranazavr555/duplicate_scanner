@@ -23,6 +23,8 @@ private:
     void make_connections();
     void make_ui();
 
+    bool request_agreement_to_delete(QString const& path);
+
 private slots:
     void open_directory();
 
@@ -31,6 +33,9 @@ public slots:
     void recieve_same_files_group(DuplicateScanner::file_size_type, DuplicateScanner::bucket_type const&);
     void set_steps_count(int);
     void set_current_step(int);
+    void show_about_qt();
+    void show_help();
+    void delete_selected();
 
 signals:
     void start_scan();
@@ -42,6 +47,7 @@ private:
     QThread *worker_thread;
     Worker *worker;
     QTime timer;
+    bool ask_agreement_to_delete_file;
 };
 
 #endif // MAINWINDOW_H

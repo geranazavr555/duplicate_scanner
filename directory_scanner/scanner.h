@@ -28,7 +28,7 @@ private:
         file_size_type files_size;
         hash_type hash;
 
-        bucket_info_type(file_size_type files_size, hash_type hash) : files_size(files_size), hash(hash) {}
+        bucket_info_type(file_size_type files_size, hash_type hash) : files_size(files_size), hash(std::move(hash)) {}
         bool operator==(bucket_info_type const& other) const
         {
             return files_size == other.files_size && hash == other.hash;
