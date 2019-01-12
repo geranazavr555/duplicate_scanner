@@ -108,7 +108,7 @@ void MainWindow::recieve_same_files_group(DuplicateScanner::file_size_type singl
         DuplicateScanner::bucket_type const & files)
 {
     auto group_root_item = new FileItem(ui->treeWidget);
-    group_root_item->setText(0, "Group size" + QString::number(files.size()));
+    group_root_item->setText(0, "Group size " + QString::number(files.size()));
     group_root_item->setText(1, QString::number(single_file_size * files.size()) + " bytes summary");
 
     for (auto const& path : files)
