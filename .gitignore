@@ -1,0 +1,6 @@
+build-*/
+cmake-*/
+*.user
+env/
+.idea
+*.data
