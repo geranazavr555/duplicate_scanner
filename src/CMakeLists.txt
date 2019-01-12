@@ -24,6 +24,6 @@ add_executable(duplicate-scanner
         directory_scanner/file_comparator.h
         directory_scanner/exceptions.h
         directory_scanner/worker.cpp
-        directory_scanner/worker.h)
+        directory_scanner/worker.h hw1/FileItem.h)
 qt5_use_modules(duplicate-scanner Widgets)
 target_link_libraries(duplicate-scanner -lpthread)

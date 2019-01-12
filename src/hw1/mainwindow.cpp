@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "directory_scanner/worker.h"
+#include "FileItem.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <QCommonStyle>
@@ -85,6 +86,7 @@ void MainWindow::open_directory()
         setWindowTitle("Duplicate scanner: " + dir);
         ui->statusBar->showMessage("Scanning...");
         ui->treeWidget->clear();
+        ui->treeWidget->setSortingEnabled(false);
         ui->progressBar->setMaximum(0);
         ui->progressBar->reset();
         ui->progressBar->show();
@@ -99,12 +101,13 @@ void MainWindow::scan_finished()
 {
     ui->statusBar->showMessage("Scanning finished in " + QString::number(timer.elapsed()) + " ms");
     ui->progressBar->hide();
+    ui->treeWidget->setSortingEnabled(true);
 }
 
 void MainWindow::recieve_same_files_group(DuplicateScanner::file_size_type single_file_size,
         DuplicateScanner::bucket_type const & files)
 {
-    auto group_root_item = new QTreeWidgetItem(ui->treeWidget);
+    auto group_root_item = new FileItem(ui->treeWidget);
     group_root_item->setText(0, "Group size" + QString::number(files.size()));
     group_root_item->setText(1, QString::number(single_file_size * files.size()) + " bytes summary");
 
@@ -120,7 +123,10 @@ void MainWindow::recieve_same_files_group(DuplicateScanner::file_size_type singl
 void MainWindow::set_steps_count(int count)
 {
     ui->progressBar->setMaximum(count);
-    ui->statusBar->showMessage("Scanning... Files detected: " + QString::number(count));
+    if (count > 0)
+        ui->statusBar->showMessage("Scanning... Files detected: " + QString::number(count));
+    else
+        ui->statusBar->showMessage("Scanning...");
 }
 
 void MainWindow::set_current_step(int step)
